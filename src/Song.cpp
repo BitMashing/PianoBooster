@@ -76,9 +76,12 @@ void CSong::midiFileInfo()
 {
     m_trackList->reset(m_midiFile->numberOfTracks());
     setTimeSig(0,0);
+    
+    // Clear the key signature timeline and don't set any global key signature yet
+    m_keySignatureTimeline.clear();
     CStavePos::setKeySignature( NOT_USED, 0 );
 
-    // Read the next events to find the active channels
+    // Read the next events to find the active channels and collect key signature timeline
     CMidiEvent event;
     while ( true )
     {
@@ -89,9 +92,36 @@ void CSong::midiFileInfo()
         {
             setTimeSig(event.data1(),event.data2());
         }
+        else if (event.type() == MIDI_PB_keySignature)
+        {
+            // Store key signature change in timeline
+            KeySignatureChange change;
+            change.deltaTime = event.deltaTime();
+            change.keySignature = event.data1();
+            change.majorMinor = event.data2();
+            m_keySignatureTimeline.push_back(change);
+            
+            ppLogInfo("Found key signature change at time %lld: key=%d major/minor=%d", 
+                     event.deltaTime(), event.data1(), event.data2());
+        }
 
         if (event.type() == MIDI_PB_EOF)
             break;
+    }
+    
+    // Set initial key signature based on first entry in timeline
+    if (!m_keySignatureTimeline.empty())
+    {
+        auto& firstKey = m_keySignatureTimeline[0];
+        CStavePos::setKeySignature(firstKey.keySignature, firstKey.majorMinor);
+        ppLogInfo("Set initial key signature: key=%d major/minor=%d", 
+                 firstKey.keySignature, firstKey.majorMinor);
+    }
+    else
+    {
+        // Default to C major if no key signature found
+        CStavePos::setKeySignature(0, 0);
+        ppLogInfo("No key signature found, defaulting to C major");
     }
 }
 
@@ -281,5 +311,32 @@ bool CSong::pcKeyPress(int key, bool down)
     }
     //printf("pcKeyPress %d %d\n", m_pcNote, key);
     return false;
+}
+
+// Get the key signature that should be active at a specific timestamp
+int CSong::getKeySignatureAtTime(qint64 timeStamp, int* majorMinor)
+{
+    int activeKeySignature = 0;  // Default to C major
+    int activeMajorMinor = 0;
+    
+    // Find the most recent key signature change at or before timeStamp
+    for (const auto& change : m_keySignatureTimeline)
+    {
+        if (change.deltaTime <= timeStamp)
+        {
+            activeKeySignature = change.keySignature;
+            activeMajorMinor = change.majorMinor;
+        }
+        else
+        {
+            // Since timeline should be chronologically ordered, we can stop here
+            break;
+        }
+    }
+    
+    if (majorMinor != nullptr)
+        *majorMinor = activeMajorMinor;
+        
+    return activeKeySignature;
 }
 

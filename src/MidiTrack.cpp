@@ -244,8 +244,8 @@ void CMidiTrack::readKeySignatureEvent()
     event.metaEvent(readDelaTime(), MIDI_PB_keySignature, keySig, majorKey);
     m_trackEventQueue->push(event);
     __dt(ppDebugTrack(4,"Key Signature %d maj/min %d", keySig, majorKey));
-    if (CStavePos::getKeySignature() == NOT_USED)
-        CStavePos::setKeySignature(event.data1(), event.data2());
+    // Note: Key signature is now handled by timeline-based system in Song.cpp
+    // No immediate global key signature setting here
 }
 
 void CMidiTrack::readMetaEvent(byte_t type)

@@ -30,6 +30,7 @@
 #define __SONG_H__
 
 #include <QString>
+#include <vector>
 
 #include "Notation.h"
 #include "Conductor.h"
@@ -88,6 +89,15 @@ public:
 
 private:
     void midiFileInfo();
+    
+    // Key signature timeline support
+    struct KeySignatureChange {
+        qint64 deltaTime;     // When this key signature change occurs
+        int keySignature;     // Key signature value (-7 to +7)
+        int majorMinor;       // Major (0) or Minor (1)
+    };
+    std::vector<KeySignatureChange> m_keySignatureTimeline;
+    int getKeySignatureAtTime(qint64 timeStamp, int* majorMinor = nullptr);
 
     CMidiFile * m_midiFile;
     CFindChord m_findChord;

@@ -270,7 +270,13 @@ void CNotation::findNoteSlots()
         else if (midi.type() == MIDI_PB_timeSignature)
             m_bar.setTimeSig(midi.data1(), midi.data2());
         else if (midi.type() == MIDI_PB_keySignature)
-            CStavePos::setKeySignature(midi.data1(), midi.data2());
+        {
+            // Key signature changes are now handled by timeline-based system
+            // Don't change the global key signature during playback to prevent
+            // notes from changing appearance when key signatures change
+            ppLogInfo("Ignoring key signature change during playback: key=%d major/minor=%d", 
+                     midi.data1(), midi.data2());
+        }
         else if (midi.type() == MIDI_NOTE_ON)
         {
             whichPart_t hand = CNote::findHand( midi, m_displayChannel, PB_PART_both );
