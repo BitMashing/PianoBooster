@@ -210,6 +210,7 @@ private:
     CQueue<CMidiEvent>* m_midiInputQueue;   // A Queue of midi events
     CSlot m_currentSlot;
     qint64 m_currentDeltaTime;        // time difference between this and the previous slot
+    qint64 m_cumulativeTimestamp;     // cumulative timestamp for timeline-based key signatures
     int m_beatPerBarCounter;
     int m_earlyBarChangeCounter;
     qint64 m_earlyBarChangeDelta; // Counts the ppqn in one bar

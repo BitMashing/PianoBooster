@@ -82,6 +82,17 @@ public:
         m_midiDuration = 0;
         m_stavePos.notePos(hand, midiNote);
     }
+    
+    // Timeline-aware constructor for proper key signature handling
+    CSymbol(musicalSymbol_t type, whichPart_t hand, int midiNote, qint64 timeStamp)
+    {
+        init();
+        m_symbolType = type;
+        m_midiNote = midiNote;
+        m_hand = hand;
+        m_midiDuration = 0;
+        m_stavePos.notePosWithTimeline(hand, midiNote, timeStamp);
+    }
 
     CSymbol()
     {

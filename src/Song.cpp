@@ -123,6 +123,9 @@ void CSong::midiFileInfo()
         CStavePos::setKeySignature(0, 0);
         ppLogInfo("No key signature found, defaulting to C major");
     }
+    
+    // Set this song as the current song for timeline access
+    setCurrentSong(this);
 }
 
 void CSong::rewind()
@@ -338,5 +341,30 @@ int CSong::getKeySignatureAtTime(qint64 timeStamp, int* majorMinor)
         *majorMinor = activeMajorMinor;
         
     return activeKeySignature;
+}
+
+// Static timeline access
+CSong* CSong::s_currentSong = nullptr;
+
+void CSong::setCurrentSong(CSong* song)
+{
+    s_currentSong = song;
+}
+
+int CSong::getTimelineKeySignatureAtTime(qint64 timeStamp, int* majorMinor)
+{
+    if (s_currentSong != nullptr)
+        return s_currentSong->getKeySignatureAtTime(timeStamp, majorMinor);
+    
+    // Fallback to C major if no song is active
+    if (majorMinor != nullptr)
+        *majorMinor = 0;
+    return 0;
+}
+
+// C-style interface for timeline key signature access
+int getTimelineKeySignatureAtTime(qint64 timeStamp, int* majorMinor)
+{
+    return CSong::getTimelineKeySignatureAtTime(timeStamp, majorMinor);
 }
 

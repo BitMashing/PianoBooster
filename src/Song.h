@@ -86,6 +86,10 @@ public:
     void refreshScroll();
 
     const QString &getSongTitle() {return m_songTitle;}
+    
+    // Static timeline access for note calculation
+    static int getTimelineKeySignatureAtTime(qint64 timeStamp, int* majorMinor = nullptr);
+    static void setCurrentSong(CSong* song);
 
 private:
     void midiFileInfo();
@@ -105,6 +109,9 @@ private:
     CChord m_fakeChord;  // the chord played with the tab key
     CTrackList* m_trackList;
     QString m_songTitle;
+    
+    // Static timeline access
+    static CSong* s_currentSong;
 };
 
 #endif  // __SONG_H__

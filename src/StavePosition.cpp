@@ -29,6 +29,9 @@
 #include "StavePosition.h"
 #include "Draw.h"
 
+// Forward declaration to avoid circular dependency
+class CSong;
+
 float CStavePos::m_staveCenterY;
 int CStavePos::m_KeySignature;
 int CStavePos::m_KeySignatureMajorMinor;
@@ -314,4 +317,34 @@ const staveLookup_t* CStavePos::getstaveLookupTable(int key)
         default: staveLookup = staffLookupC;      break;
     }
     return staveLookup;
+}
+
+// Timeline-based note position calculation
+void CStavePos::notePosWithTimeline(whichPart_t hand, int midiNote, qint64 timeStamp)
+{
+    // Get the key signature that should be active at this timestamp
+    int majorMinor;
+    int timelineKeySignature = getTimelineKeySignatureAtTime(timeStamp, &majorMinor);
+    
+    // Get the lookup table for this specific timestamp's key signature
+    const staveLookup_t* timelineLookupTable = getstaveLookupTable(timelineKeySignature);
+    
+    // Calculate note position using timeline-specific key signature
+    const int notesInAnOctive = 7; // Don't count middle C twice
+    const int semitonesInAnOctive = 12;
+    setHand(hand);
+    int index = midiNote % semitonesInAnOctive;
+
+    const staveLookup_t* lookUpItem = &timelineLookupTable[index];
+
+    if (m_hand == PB_PART_right)
+        m_staveIndex = lookUpItem->pianoNote - 7;
+    else if (m_hand == PB_PART_left)
+        m_staveIndex = lookUpItem->pianoNote + 5;
+
+    m_staveIndex += (midiNote/semitonesInAnOctive)*notesInAnOctive - notesInAnOctive*5;
+    m_accidental = lookUpItem->accidental;
+    
+    ppLogTrace("Timeline note calculation: timestamp=%lld, key=%d, note=%d -> accidental=%d", 
+              timeStamp, timelineKeySignature, midiNote, m_accidental);
 }

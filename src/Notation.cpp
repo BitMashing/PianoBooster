@@ -249,6 +249,7 @@ void CNotation::findNoteSlots()
         midi = m_midiInputQueue->pop();
 
         m_currentDeltaTime += midi.deltaTime();
+        m_cumulativeTimestamp += midi.deltaTime();
         m_earlyBarChangeDelta += midi.deltaTime();
         if (midi.type() == MIDI_PB_chordSeparator || midi.type() == MIDI_PB_EOF)
         {
@@ -271,10 +272,10 @@ void CNotation::findNoteSlots()
             m_bar.setTimeSig(midi.data1(), midi.data2());
         else if (midi.type() == MIDI_PB_keySignature)
         {
-            // Key signature changes are now handled by timeline-based system
-            // Don't change the global key signature during playback to prevent
-            // notes from changing appearance when key signatures change
-            ppLogInfo("Ignoring key signature change during playback: key=%d major/minor=%d", 
+            // Update visual key signature display for traditional sheet music behavior
+            // This changes the ♭/♯ symbols at the beginning of the staff
+            CStavePos::setKeySignature(midi.data1(), midi.data2());
+            ppLogInfo("Updated visual key signature display: key=%d major/minor=%d", 
                      midi.data1(), midi.data2());
         }
         else if (midi.type() == MIDI_NOTE_ON)
@@ -287,7 +288,8 @@ void CNotation::findNoteSlots()
                     symbolType = PB_SYMBOL_drum;
                 else
                     symbolType = PB_SYMBOL_noteHead;
-                CSymbol symbol(symbolType, hand, midi.note());
+                // Use timeline-based symbol creation for proper key signature handling
+                CSymbol symbol(symbolType, hand, midi.note(), m_cumulativeTimestamp);
                 symbol.setColor(Cfg::noteColor());
                 symbol.setMidiDuration(midi.getDuration());
 
@@ -370,6 +372,7 @@ void CNotation::reset()
     const int cfg_earlBarLead = CMidiFile::ppqnAdjust(8);
 
     m_currentDeltaTime = 0;
+    m_cumulativeTimestamp = 0;
     m_midiInputQueue->clear();
     m_slotQueue->clear();
     for (auto &slot : m_mergeSlots)

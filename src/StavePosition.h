@@ -32,6 +32,9 @@
 #include "Util.h"
 #include "Chord.h"
 
+// Forward declaration for timeline key signature access
+int getTimelineKeySignatureAtTime(qint64 timeStamp, int* majorMinor = nullptr);
+
 typedef  struct {
     int pianoNote;   // 1 is Middle C, 2 is D
     int accidental;
@@ -84,6 +87,7 @@ public:
     }
 
     void notePos(whichPart_t hand, int midiNote);
+    void notePosWithTimeline(whichPart_t hand, int midiNote, qint64 timeStamp);
 
     ////////////////////////////////////////////////////////////////////////////////
     //! @brief Sets which stave the note will appear on
