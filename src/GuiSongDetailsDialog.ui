@@ -91,6 +91,75 @@
     </widget>
    </item>
    <item>
+    <widget class="QGroupBox" name="chordDetectionGroupBox">
+     <property name="title">
+      <string>Chord Detection Settings</string>
+     </property>
+     <layout class="QVBoxLayout" name="chordDetectionLayout">
+      <item>
+       <widget class="QLabel" name="chordDetectionLabel">
+        <property name="text">
+         <string>Adjust how notes are grouped into chords:</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="chordDetectionSliderLayout">
+        <item>
+         <widget class="QLabel" name="minLabel">
+          <property name="text">
+           <string>Minimal</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSlider" name="chordDetectionSlider">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="minimum">
+           <number>0</number>
+          </property>
+          <property name="maximum">
+           <number>2</number>
+          </property>
+          <property name="value">
+           <number>1</number>
+          </property>
+          <property name="tickPosition">
+           <enum>QSlider::TicksBelow</enum>
+          </property>
+          <property name="tickInterval">
+           <number>1</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="maxLabel">
+          <property name="text">
+           <string>Generous</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QLabel" name="chordDetectionInfoLabel">
+        <property name="text">
+         <string>Current: Standard (10/20 ticks)</string>
+        </property>
+        <property name="styleSheet">
+         <string>color: gray; font-style: italic;</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>

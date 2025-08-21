@@ -50,6 +50,8 @@ private slots:
     void accept();
     void on_leftHandChannelCombo_activated (int index);
     void on_rightHandChannelCombo_activated (int index);
+    void on_chordDetectionSlider_valueChanged(int value);
+    void updateChordDetectionInfo();
 
 private:
     void updateSongInfoText();

@@ -160,6 +160,27 @@ public:
         return locale;
     }
 
+    // Chord detection settings
+    int getChordDetectionLevel() { return value("Score/ChordDetectionLevel", 1).toInt(); }
+    void setChordDetectionLevel(int level) { setValue("Score/ChordDetectionLevel", level); }
+    
+    void applyChordDetectionLevel(int level) {
+        switch (level) {
+            case 0: // Minimal
+                Cfg::setChordNoteGap(3);
+                Cfg::setChordMaxLength(8);
+                break;
+            case 1: // Standard
+                Cfg::setChordNoteGap(10);
+                Cfg::setChordMaxLength(20);
+                break;
+            case 2: // Generous
+                Cfg::setChordNoteGap(15);
+                Cfg::setChordMaxLength(30);
+                break;
+        }
+    }
+
 private:
 
     Q_OBJECT

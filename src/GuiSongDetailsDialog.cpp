@@ -51,6 +51,12 @@ void GuiSongDetailsDialog::init(CSong* song, CSettings* settings)
 
     leftHandChannelCombo->setCurrentIndex(m_trackList->getHandTrackIndex(PB_PART_left) + 1);
     rightHandChannelCombo->setCurrentIndex(m_trackList->getHandTrackIndex(PB_PART_right) +1);
+    
+    // Initialize chord detection slider
+    int currentLevel = m_settings->getChordDetectionLevel();
+    chordDetectionSlider->setValue(currentLevel);
+    updateChordDetectionInfo();
+    
     updateSongInfoText();
 
 }
@@ -89,8 +95,43 @@ void GuiSongDetailsDialog::on_rightHandChannelCombo_activated (int index)
     updateSongInfoText();
 }
 
+void GuiSongDetailsDialog::on_chordDetectionSlider_valueChanged(int value)
+{
+    Q_UNUSED(value)
+    updateChordDetectionInfo();
+}
+
+void GuiSongDetailsDialog::updateChordDetectionInfo()
+{
+    int value = chordDetectionSlider->value();
+    QString info;
+    
+    switch (value) {
+        case 0: // Minimal
+            info = tr("Current: Minimal (3/8 ticks) - Notes rarely grouped");
+            break;
+        case 1: // Standard
+            info = tr("Current: Standard (10/20 ticks) - Balanced grouping");
+            break;
+        case 2: // Generous
+            info = tr("Current: Generous (15/30 ticks) - Notes often grouped");
+            break;
+        default:
+            info = tr("Current: Standard (10/20 ticks) - Balanced grouping");
+            break;
+    }
+    
+    chordDetectionInfoLabel->setText(info);
+}
+
 void GuiSongDetailsDialog::accept()
 {
     m_trackList->setActiveHandsIndex(leftHandChannelCombo->currentIndex() -1, rightHandChannelCombo->currentIndex() -1);
+    
+    // Save chord detection settings
+    int level = chordDetectionSlider->value();
+    m_settings->setChordDetectionLevel(level);
+    m_settings->applyChordDetectionLevel(level);
+    
     this->QDialog::accept();
 }
