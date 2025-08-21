@@ -86,8 +86,8 @@ public:
     static int playZoneEarly()     {return m_playZoneEarly;}
     static int playZoneLate()      {return m_playZoneLate;}
     static int silenceTimeOut()    {return 8000;} // the time in msec before everything goes quiet
-    static int chordNoteGap()      {return 10;} // all notes in a cord must be spaced less than this a gap
-    static int chordMaxLength()    {return 20;} // the max time between the start and end of a cord
+    static int chordNoteGap()      {return m_chordNoteGap;} // Make configurable
+    static int chordMaxLength()    {return m_chordMaxLength;} // Make configurable
 
     static CColor menuColor()        {return CColor(0.1, 0.6, 0.6);}
     static CColor menuSelectedColor(){return CColor(0.7, 0.7, 0.1);}
@@ -148,6 +148,12 @@ private:
     static int m_appX, m_appY, m_appWidth, m_appHeight;
     static const int m_playZoneEarly;
     static const int m_playZoneLate;
+    static int m_chordNoteGap;     // Default value
+    static int m_chordMaxLength;   // Default value
+
+public:
+    static void setChordNoteGap(int value) { m_chordNoteGap = value; }
+    static void setChordMaxLength(int value) { m_chordMaxLength = value; }
 };
 
 #endif //__CFG_H__

@@ -45,3 +45,6 @@ int Cfg::tickRate;
 
 const int Cfg::m_playZoneEarly = 25; // Was 25
 const int Cfg::m_playZoneLate = 25;
+
+int Cfg::m_chordNoteGap = 10;     // Default value
+int Cfg::m_chordMaxLength = 20;   // Default value

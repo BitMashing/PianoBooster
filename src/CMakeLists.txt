@@ -10,7 +10,7 @@ else()
    option(USE_BUNDLED_RTMIDI "Build with bundled rtmidi" ON)
 endif()
 
-cmake_minimum_required(VERSION 2.4)
+cmake_minimum_required(VERSION 3.10)
 if(COMMAND cmake_policy)
     cmake_policy(SET CMP0003 NEW)
 endif(COMMAND cmake_policy)
@@ -73,7 +73,7 @@ if(NO_LANGS)
 endif()
 
 # Finds Qt libraries
-set(QT_PACKAGE_NAME Qt5 CACHE STRING "Name of the Qt package to use, set e.g. to \"Qt6\" to use Qt 6")
+set(QT_PACKAGE_NAME Qt6 CACHE STRING "Name of the Qt package to use, set e.g. to \"Qt6\" to use Qt 6")
 set(QT_COMPONENTS Core Gui Widgets LinguistTools OpenGL Xml)
 set(QT_LIBS ${QT_PACKAGE_NAME}::Core ${QT_PACKAGE_NAME}::Gui ${QT_PACKAGE_NAME}::Widgets ${QT_PACKAGE_NAME}::Xml ${QT_PACKAGE_NAME}::OpenGL)
 if (QT_PACKAGE_NAME STREQUAL Qt6)
